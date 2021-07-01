@@ -1,4 +1,4 @@
-package com.example.madcamp1_2;
+package com.example.madcamp1_2_2;
 
 import org.junit.Test;
 
