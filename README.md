@@ -1,2 +1,2 @@
 # Madcamp1_2
-세 개의 탭이 존재하는 안드로이드 앱
+Android app with three tabs
