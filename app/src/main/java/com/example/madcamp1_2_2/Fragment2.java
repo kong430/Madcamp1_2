@@ -10,7 +10,7 @@ import android.view.ViewGroup;
 
 /**
  * A simple {@link Fragment} subclass.
- * Use the {@link Fragment2#newInstance} factory method to
+ * Use the {@link Fragment3#newInstance} factory method to
  * create an instance of this fragment.
  */
 public class Fragment2 extends Fragment {
@@ -34,7 +34,7 @@ public class Fragment2 extends Fragment {
      *
      * @param param1 Parameter 1.
      * @param param2 Parameter 2.
-     * @return A new instance of fragment Fragment2.
+     * @return A new instance of fragment FragmentDos.
      */
     // TODO: Rename and change types and number of parameters
     public static Fragment2 newInstance(String param1, String param2) {
