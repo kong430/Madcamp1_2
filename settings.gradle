@@ -1,0 +1,2 @@
+rootProject.name = "Madcamp1_2"
+include ':app'
