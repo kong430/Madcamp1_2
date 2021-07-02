@@ -79,9 +79,6 @@ public class Fragment2 extends Fragment {
         // Inflate the layout for this fragment
         ViewGroup galleryView = (ViewGroup) inflater.inflate(R.layout.fragment_2, container, false);
 
-        /**setContentView(R.layout.fragment_2);*/
-
-        /**mContext = container.getContext();*/
         mContext = getActivity().getApplicationContext();
 
         GridView gridViewImages = (GridView)galleryView.findViewById(R.id.gridview);

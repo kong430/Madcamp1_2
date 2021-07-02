@@ -17,6 +17,7 @@ public class ImageClickListener implements View.OnClickListener {
     public void onClick(View v) {
         Intent intent = new Intent(context, ImageActivity.class);
         intent.putExtra("image ID", imageID);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         context.startActivity(intent);
     }
 }
