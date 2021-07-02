@@ -1,5 +1,7 @@
 package com.example.madcamp1_2_2;
 
+import android.app.Activity;
+import android.content.Context;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
@@ -7,6 +9,7 @@ import androidx.fragment.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.GridView;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -53,12 +56,62 @@ public class Fragment2 extends Fragment {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
+
     }
 
+    Context mContext;
+    Activity mActivity;
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        if (context instanceof Activity) {
+            mActivity = (Activity) context;
+        }
+    }
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        mActivity = null;
+    }
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_2, container, false);
+        ViewGroup galleryView = (ViewGroup) inflater.inflate(R.layout.fragment_2, container, false);
+
+        /**setContentView(R.layout.fragment_2);*/
+
+        /**mContext = container.getContext();*/
+        mContext = getActivity().getApplicationContext();
+
+        GridView gridViewImages = (GridView)galleryView.findViewById(R.id.gridview);
+        ImageGridAdapter imageGridAdapter = new ImageGridAdapter(mContext, imageIDs);
+        gridViewImages.setAdapter(imageGridAdapter);
+
+        return galleryView;
     }
+
+    private int[] imageIDs = new int[]{
+            R.drawable.image1,
+            R.drawable.image2,
+            R.drawable.image3,
+            R.drawable.image4,
+            R.drawable.image5,
+            R.drawable.image6,
+            R.drawable.image7,
+            R.drawable.image8,
+            R.drawable.image9,
+            R.drawable.image10,
+            R.drawable.image11,
+            R.drawable.image12,
+            R.drawable.image13,
+            R.drawable.image14,
+            R.drawable.image15,
+            R.drawable.image16,
+            R.drawable.image17,
+            R.drawable.image18,
+            R.drawable.image19,
+            R.drawable.image20,
+    };
+
 }
