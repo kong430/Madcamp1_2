@@ -7,6 +7,11 @@ import androidx.fragment.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.DatePicker;
+import android.widget.TextView;
+import android.widget.TimePicker;
+
+import java.util.Calendar;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -58,7 +63,29 @@ public class Fragment3 extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_3, container, false);
+        // Inflate the layout for this fragments
+        ViewGroup viewGroup = (ViewGroup) inflater.inflate(R.layout.fragment_3, container, false);
+        TimePicker mTimePicker = (TimePicker) viewGroup.findViewById(R.id.timePicker);
+
+        Calendar mCalendar = Calendar.getInstance();
+        mTimePicker.clearFocus();
+
+        final int[] hour = new int[1];
+        final int[] min = new int[1];
+
+        hour[0] = mTimePicker.getHour();
+        min[0] = mTimePicker.getMinute();
+
+        TextView mTextView = viewGroup.findViewById(R.id.textView);
+        mTimePicker.setOnTimeChangedListener(new TimePicker.OnTimeChangedListener() {
+            @Override
+            public void onTimeChanged(TimePicker view, int hourOfDay, int minute) {
+                mTextView.setText(hourOfDay + "시" + minute + "분");
+                hour[0] = hourOfDay;
+                min[0] = minute;
+            }
+        });
+
+        return viewGroup;
     }
 }
