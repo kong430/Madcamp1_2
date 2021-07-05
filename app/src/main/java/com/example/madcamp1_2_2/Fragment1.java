@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -16,9 +17,12 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
+
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import java.util.ArrayList;
 import static android.app.Activity.RESULT_OK;
@@ -106,6 +110,15 @@ public class Fragment1 extends Fragment {
 
         ContactAdapter adapter = new ContactAdapter(mContext, R.layout.row, contact.datas);
         listView.setAdapter(adapter);
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                final PhoneBook item = (PhoneBook) adapter.getItem(position);
+                String tel = item.getTel();
+                Intent intent_tel = new Intent(Intent.ACTION_DIAL, Uri.parse("tel:" + tel));
+                startActivity(intent_tel);
+            }
+        });
 
         FloatingActionButton fab = (FloatingActionButton) v.findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -173,4 +186,6 @@ public class Fragment1 extends Fragment {
         Log.d("yjyj", "In Frag1, onStop");
         super.onStop();
     }
+
+
 }
