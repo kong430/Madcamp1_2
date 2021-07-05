@@ -22,6 +22,7 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContract;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.Nullable;
+import androidx.core.app.ActivityCompat;
 import androidx.core.app.ActivityOptionsCompat;
 import androidx.core.location.LocationManagerCompat;
 import androidx.fragment.app.Fragment;
@@ -96,6 +97,7 @@ public class Fragment3 extends Fragment {
     static Context mContext;
     Switch sw;
     boolean isSwitchOn = false;
+    String address;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -213,14 +215,19 @@ public class Fragment3 extends Fragment {
         });
 
         GpsTracker gpsTracker = new GpsTracker(mContext);
-        showDialogForLocationServiceSetting();
+        String[] s = new String[]{"android.permission.ACCESS_FINE_LOCATION", "android.permission.ACCESS_COARSE_LOCATION"};
+        if (!hasPermissions(mContext, s)){
+            showDialogForLocationServiceSetting();
+        }
         double latitude = gpsTracker.getLatitude();
         double longitude = gpsTracker.getLongitude();
+
+        address = getCurrentAddress(latitude, longitude);
+
         TextView textview = (TextView) viewGroup.findViewById(R.id.textView);
         textview.setText(Double.toString(latitude) + ' ' + Double.toString(longitude));
-
-        //String address = getCurrentAddress(latitude, longitude);
-
+        TextView textview2 = (TextView) viewGroup.findViewById(R.id.textView2);
+        textview2.setText(address);
 
         return viewGroup;
     }
@@ -228,22 +235,28 @@ public class Fragment3 extends Fragment {
     public String getCurrentAddress(double latitude, double longitude){
         Geocoder geocoder = new Geocoder(mContext, Locale.getDefault());
         List<Address> addresses;
+        Address address;
         try{
             addresses = geocoder.getFromLocation(
                     latitude,
                     longitude,
                     100);
+            if (addresses.size() > 0) {
+                address = addresses.get(0);
+                return address.getAddressLine(0).toString() + "\n";
+            }
+            else return null;
+
+
         } catch (IOException ioException) {
             Toast.makeText(mContext, "지오코더 서비스 사용불가", Toast.LENGTH_LONG).show();
             showDialogForLocationServiceSetting();
             return "지오코더 서비스 사용불가";
         }catch (IllegalArgumentException illegalArgumentException){
             Toast.makeText(mContext, "잘못된 GPS 좌표", Toast.LENGTH_LONG).show();
-            showDialogForLocationServiceSetting();
+            if (!checkLocationServicesStatus(mContext)) showDialogForLocationServiceSetting();
             return "주소 미발견";
         }
-        Address address = addresses.get(0);
-        return address.getAddressLine(0).toString() + "\n";
     }
 
     private void showDialogForLocationServiceSetting(){
@@ -287,12 +300,23 @@ public class Fragment3 extends Fragment {
 
     private boolean checkLocationServicesStatus(Context context) {
         LocationManager locationManager = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
-        return LocationManagerCompat.isLocationEnabled(locationManager);
+        return locationManager.isLocationEnabled();
     }
 
     private void CheckState(){
         if (sw.isChecked()) isSwitchOn = true;
         else isSwitchOn = false;
+    }
+
+    public static boolean hasPermissions(Context context, String[] permissions) {
+        if (context != null && permissions != null) {
+            for (String permission : permissions) {
+                if (ActivityCompat.checkSelfPermission(context, permission) != PackageManager.PERMISSION_GRANTED) {
+                    return false;
+                }
+            }
+        }
+        return true;
     }
 
     void diaryNotification(Calendar calendar){
