@@ -1,5 +1,6 @@
 package com.example.madcamp1_2_2;
 
+import android.Manifest;
 import android.app.Activity;
 import android.app.AlarmManager;
 import android.app.AlertDialog;
@@ -29,6 +30,7 @@ import androidx.fragment.app.Fragment;
 
 import android.provider.Settings;
 import android.telephony.CarrierConfigManager;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -58,6 +60,8 @@ public class Fragment3 extends Fragment {
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
     private static final int GPS_ENABLE_REQUEST_CODE = 100;
+    private static final int REQUEST_F_LOCATION = 101;
+    private static final int REQUEST_C_LOCATION = 102;
 
     // TODO: Rename and change types of parameters
     private String mParam1;
@@ -98,33 +102,18 @@ public class Fragment3 extends Fragment {
     Switch sw;
     boolean isSwitchOn = false;
     String address;
+    boolean isLocationAvailable = false;
+    GpsTracker gpsTracker;
+    ViewGroup viewGroup;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragments
-        ViewGroup viewGroup = (ViewGroup) inflater.inflate(R.layout.fragment_3, container, false);
+        viewGroup = (ViewGroup) inflater.inflate(R.layout.fragment_3, container, false);
         TimePicker mTimePicker = (TimePicker) viewGroup.findViewById(R.id.timePicker);
 
         mContext = getContext();
-
-        /**Calendar mCalendar = Calendar.getInstance();
-         mTimePicker.clearFocus();
-
-         final int[] hour = new int[1];
-         final int[] min = new int[1];
-
-         hour[0] = mTimePicker.getHour();
-         min[0] = mTimePicker.getMinute();
-
-         TextView mTextView = viewGroup.findViewById(R.id.textView);
-         mTimePicker.setOnTimeChangedListener(new TimePicker.OnTimeChangedListener() {
-        @Override public void onTimeChanged(TimePicker view, int hourOfDay, int minute) {
-        mTextView.setText(hourOfDay + "시" + minute + "분");
-        hour[0] = hourOfDay;
-        min[0] = minute;
-        }
-        });*/
 
         //앞서 설정한 값으로 보여주기
         //없으면 현재시간
@@ -214,21 +203,25 @@ public class Fragment3 extends Fragment {
             }
         });
 
-        GpsTracker gpsTracker = new GpsTracker(mContext);
-        String[] s = new String[]{"android.permission.ACCESS_FINE_LOCATION", "android.permission.ACCESS_COARSE_LOCATION"};
+        gpsTracker = new GpsTracker(mContext);
+        String[] s = new String[]{"android.permission.ACCESS_FINE_LOCATION"};
         if (!hasPermissions(mContext, s)){
-            showDialogForLocationServiceSetting();
+            requestLocationPermission();
         }
-        double latitude = gpsTracker.getLatitude();
-        double longitude = gpsTracker.getLongitude();
+        else {
+            Log.d("testtest", "after permission");
 
-        address = getCurrentAddress(latitude, longitude);
+            double latitude = gpsTracker.getLatitude();
+            double longitude = gpsTracker.getLongitude();
 
-        TextView textview = (TextView) viewGroup.findViewById(R.id.textView);
-        textview.setText(Double.toString(latitude) + ' ' + Double.toString(longitude));
-        TextView textview2 = (TextView) viewGroup.findViewById(R.id.textView2);
-        textview2.setText(address);
+            address = getCurrentAddress(latitude, longitude);
+            Log.d("testtest", "after getAddress");
 
+            TextView textview = (TextView) viewGroup.findViewById(R.id.textView);
+            textview.setText(Double.toString(latitude) + ' ' + Double.toString(longitude));
+            TextView textview2 = (TextView) viewGroup.findViewById(R.id.textView2);
+            textview2.setText(address);
+        }
         return viewGroup;
     }
 
@@ -250,16 +243,16 @@ public class Fragment3 extends Fragment {
 
         } catch (IOException ioException) {
             Toast.makeText(mContext, "지오코더 서비스 사용불가", Toast.LENGTH_LONG).show();
-            showDialogForLocationServiceSetting();
+            requestLocationPermission();
             return "지오코더 서비스 사용불가";
         }catch (IllegalArgumentException illegalArgumentException){
             Toast.makeText(mContext, "잘못된 GPS 좌표", Toast.LENGTH_LONG).show();
-            if (!checkLocationServicesStatus(mContext)) showDialogForLocationServiceSetting();
+            if (!checkLocationServicesStatus(mContext)) requestLocationPermission();
             return "주소 미발견";
         }
     }
 
-    private void showDialogForLocationServiceSetting(){
+    /**private void showDialogForLocationServiceSetting(){
         AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
         builder.setTitle("위치 서비스 비활성화");
         builder.setMessage("앱을 사용하기 위해서는 위치 서비스가 필요합니다.\n");
@@ -280,6 +273,47 @@ public class Fragment3 extends Fragment {
         if (! ((Activity) mContext).isFinishing()){
             builder.create().show();
 
+        }
+    }*/
+
+    protected void requestLocationPermission() {
+        /**if (ActivityCompat.shouldShowRequestPermissionRationale((Activity) mContext,
+                android.Manifest.permission.ACCESS_FINE_LOCATION)) {
+            // show UI part if you want here to show some rationale !!!
+        } else {
+            requestPermissions(new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION},
+                    REQUEST_F_LOCATION);
+        }*/
+        if (ActivityCompat.shouldShowRequestPermissionRationale((Activity) mContext,
+                android.Manifest.permission.ACCESS_FINE_LOCATION)) {
+            // show UI part if you want here to show some rationale !!!
+        } else {
+            requestPermissions(new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION},
+                    REQUEST_F_LOCATION);
+        }
+    }
+
+    public void onRequestPermissionsResult (int requestCode,
+                                            String permissions[], int[] grantResults) {
+        switch (requestCode) {
+            case REQUEST_F_LOCATION: {
+                if (grantResults.length > 0
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    isLocationAvailable = true;
+                    double latitude = gpsTracker.getLatitude();
+                    double longitude = gpsTracker.getLongitude();
+
+                    address = getCurrentAddress(latitude, longitude);
+                    Log.d("testtest", "after getAddress");
+
+                    TextView textview = (TextView) viewGroup.findViewById(R.id.textView);
+                    textview.setText(Double.toString(latitude) + ' ' + Double.toString(longitude));
+                    TextView textview2 = (TextView) viewGroup.findViewById(R.id.textView2);
+                    textview2.setText(address);
+                }
+                else isLocationAvailable = false;
+                return;
+            }
         }
     }
 
