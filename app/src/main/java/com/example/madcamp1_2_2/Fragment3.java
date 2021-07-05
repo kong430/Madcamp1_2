@@ -53,7 +53,7 @@ import java.util.Locale;
  * Use the {@link Fragment3#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class Fragment3 extends Fragment {
+public class Fragment3<isLocationAvailable> extends Fragment {
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -203,27 +203,14 @@ public class Fragment3 extends Fragment {
             }
         });
 
-        gpsTracker = new GpsTracker(mContext);
         String[] s = new String[]{"android.permission.ACCESS_FINE_LOCATION"};
-        if (!hasPermissions(mContext, s)){
+        if (!hasPermissions(mContext, s)) {
             requestLocationPermission();
         }
-        else {
-            Log.d("testtest", "after permission");
 
-            double latitude = gpsTracker.getLatitude();
-            double longitude = gpsTracker.getLongitude();
-
-            address = getCurrentAddress(latitude, longitude);
-            Log.d("testtest", "after getAddress");
-
-            TextView textview = (TextView) viewGroup.findViewById(R.id.textView);
-            textview.setText(Double.toString(latitude) + ' ' + Double.toString(longitude));
-            TextView textview2 = (TextView) viewGroup.findViewById(R.id.textView2);
-            textview2.setText(address);
-        }
         return viewGroup;
     }
+
 
     public String getCurrentAddress(double latitude, double longitude){
         Geocoder geocoder = new Geocoder(mContext, Locale.getDefault());
@@ -300,6 +287,9 @@ public class Fragment3 extends Fragment {
                 if (grantResults.length > 0
                         && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     isLocationAvailable = true;
+                    gpsTracker = new GpsTracker(mContext);
+                    Log.d("testtest", "after permission");
+
                     double latitude = gpsTracker.getLatitude();
                     double longitude = gpsTracker.getLongitude();
 
@@ -310,6 +300,8 @@ public class Fragment3 extends Fragment {
                     textview.setText(Double.toString(latitude) + ' ' + Double.toString(longitude));
                     TextView textview2 = (TextView) viewGroup.findViewById(R.id.textView2);
                     textview2.setText(address);
+
+                    Log.d("testtest", Double.toString(latitude) + ' ' + Double.toString(longitude));
                 }
                 else isLocationAvailable = false;
                 return;
