@@ -1,31 +1,48 @@
 package com.example.madcamp1_2_2;
 
+import android.app.Activity;
 import android.app.AlarmManager;
+import android.app.AlertDialog;
 import android.app.PendingIntent;
 import android.content.ComponentName;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.location.Address;
+import android.location.Geocoder;
+import android.location.LocationManager;
 import android.os.Build;
 import android.os.Bundle;
 
+import androidx.activity.result.ActivityResult;
+import androidx.activity.result.ActivityResultCallback;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContract;
+import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.annotation.Nullable;
+import androidx.core.app.ActivityOptionsCompat;
+import androidx.core.location.LocationManagerCompat;
 import androidx.fragment.app.Fragment;
 
-import android.preference.PreferenceManager;
+import android.provider.Settings;
+import android.telephony.CarrierConfigManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.DatePicker;
+import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.List;
 import java.util.Locale;
 
 /**
@@ -39,6 +56,7 @@ public class Fragment3 extends Fragment {
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
+    private static final int GPS_ENABLE_REQUEST_CODE = 100;
 
     // TODO: Rename and change types of parameters
     private String mParam1;
@@ -75,7 +93,9 @@ public class Fragment3 extends Fragment {
         }
     }
 
-    Context mContext;
+    static Context mContext;
+    Switch sw;
+    boolean isSwitchOn = false;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -84,7 +104,7 @@ public class Fragment3 extends Fragment {
         ViewGroup viewGroup = (ViewGroup) inflater.inflate(R.layout.fragment_3, container, false);
         TimePicker mTimePicker = (TimePicker) viewGroup.findViewById(R.id.timePicker);
 
-        mContext = getActivity().getApplicationContext();
+        mContext = getContext();
 
         /**Calendar mCalendar = Calendar.getInstance();
          mTimePicker.clearFocus();
@@ -128,7 +148,7 @@ public class Fragment3 extends Fragment {
         mTimePicker.setHour(pre_hour);
         mTimePicker.setMinute(pre_minute);
 
-        Button button = (Button) viewGroup.findViewById(R.id.button);
+        /**Button button = (Button) viewGroup.findViewById(R.id.button1);
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -155,12 +175,131 @@ public class Fragment3 extends Fragment {
 
                 diaryNotification(calendar);
             }
+        });*/
+
+        sw = viewGroup.findViewById(R.id.switch1);
+        sw.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v) {
+                CheckState();
+                if (isSwitchOn){
+                    int hour, minute;
+                    hour = mTimePicker.getHour();
+                    minute = mTimePicker.getMinute();
+
+                    Calendar calendar = Calendar.getInstance();
+                    calendar.setTimeInMillis(System.currentTimeMillis());
+                    calendar.set(Calendar.HOUR_OF_DAY, hour);
+                    calendar.set(Calendar.MINUTE, minute);
+                    calendar.set(Calendar.SECOND, 0);
+
+                    if (calendar.before(Calendar.getInstance())) {
+                        calendar.add(Calendar.DATE, 1);
+                    }
+                    Date currentDateTime = calendar.getTime();
+                    String date_text = new SimpleDateFormat("yyyy년 MM월 dd일 EE요일 a hh시 mm분", Locale.getDefault()).format(currentDateTime);
+                    Toast.makeText(viewGroup.getContext().getApplicationContext(), date_text + "으로 알람이 설정되었습니다", Toast.LENGTH_SHORT).show();
+
+                    SharedPreferences.Editor editor = getContext().getSharedPreferences("daily alarm", Context.MODE_PRIVATE).edit();
+                    editor.putLong("nextNotifyTime", (long) calendar.getTimeInMillis());
+                    editor.apply();
+
+                    diaryNotification(calendar);
+                }
+                else{
+                    Toast.makeText(viewGroup.getContext().getApplicationContext(), "알람이 해제되었습니다", Toast.LENGTH_SHORT).show();
+                }
+            }
         });
+
+        GpsTracker gpsTracker = new GpsTracker(mContext);
+        showDialogForLocationServiceSetting();
+        double latitude = gpsTracker.getLatitude();
+        double longitude = gpsTracker.getLongitude();
+        TextView textview = (TextView) viewGroup.findViewById(R.id.textView);
+        textview.setText(Double.toString(latitude) + ' ' + Double.toString(longitude));
+
+        //String address = getCurrentAddress(latitude, longitude);
+
+
         return viewGroup;
     }
 
+    public String getCurrentAddress(double latitude, double longitude){
+        Geocoder geocoder = new Geocoder(mContext, Locale.getDefault());
+        List<Address> addresses;
+        try{
+            addresses = geocoder.getFromLocation(
+                    latitude,
+                    longitude,
+                    100);
+        } catch (IOException ioException) {
+            Toast.makeText(mContext, "지오코더 서비스 사용불가", Toast.LENGTH_LONG).show();
+            showDialogForLocationServiceSetting();
+            return "지오코더 서비스 사용불가";
+        }catch (IllegalArgumentException illegalArgumentException){
+            Toast.makeText(mContext, "잘못된 GPS 좌표", Toast.LENGTH_LONG).show();
+            showDialogForLocationServiceSetting();
+            return "주소 미발견";
+        }
+        Address address = addresses.get(0);
+        return address.getAddressLine(0).toString() + "\n";
+    }
+
+    private void showDialogForLocationServiceSetting(){
+        AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
+        builder.setTitle("위치 서비스 비활성화");
+        builder.setMessage("앱을 사용하기 위해서는 위치 서비스가 필요합니다.\n");
+        builder.setCancelable(true);
+        builder.setPositiveButton("설정", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                Intent callGPSSettingIntent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+                startActivityForResult(callGPSSettingIntent, GPS_ENABLE_REQUEST_CODE);
+            }
+        });
+        builder.setNegativeButton("취소", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
+            }
+        });
+        if (! ((Activity) mContext).isFinishing()){
+            builder.create().show();
+
+        }
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        /**switch (requestCode){
+            case GPS_ENABLE_REQUEST_CODE:
+                if (checkLocationServicesStatus(mContext)) {
+                    if (checkLocationServicesStatus(mContext)){
+                        checkRunTimePermission();
+                        return;
+                    }
+                }
+                break;
+        }*/
+    }
+
+    private boolean checkLocationServicesStatus(Context context) {
+        LocationManager locationManager = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
+        return LocationManagerCompat.isLocationEnabled(locationManager);
+    }
+
+    private void CheckState(){
+        if (sw.isChecked()) isSwitchOn = true;
+        else isSwitchOn = false;
+    }
+
     void diaryNotification(Calendar calendar){
-        Boolean dailyNotify = true;
+        Boolean dailyNotify = false;
+        if (isSwitchOn) dailyNotify = true;
+        else dailyNotify = false;
+
         PackageManager pm = mContext.getPackageManager();
         ComponentName receiver = new ComponentName(mContext, DeviceBootReceiver.class);
         Intent alarmIntent = new Intent(mContext, AlarmReceiver.class);
