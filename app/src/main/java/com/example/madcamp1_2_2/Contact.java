@@ -8,6 +8,7 @@ import android.provider.ContactsContract;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 public class Contact {
@@ -48,7 +49,7 @@ public class Contact {
                 datas.add(phoneBook);
             }
         }
-        datas.sort(null);
+        Collections.sort(datas);
         cursor.close();
         return datas;
     }

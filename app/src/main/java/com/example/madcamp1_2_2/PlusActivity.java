@@ -28,6 +28,7 @@ import java.util.ArrayList;
 public class PlusActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        Log.d("yjyj", "In PlusActivity");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_plus);
         Button button = (Button) findViewById(R.id.button);

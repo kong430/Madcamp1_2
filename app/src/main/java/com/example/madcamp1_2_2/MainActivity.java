@@ -14,18 +14,15 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.Cursor;
 import android.os.Build;
 import android.os.Bundle;
+import android.util.Log;
 
 import com.google.android.material.tabs.TabLayout;
 
 public class MainActivity extends AppCompatActivity {
 
-
-    // Request code for READ_CONTACTS. It can be any number > 0.
-    public static final int REQUEST_READ_CONTACTS = 79;
-    public static final int REQUEST_WRITE_CONTACTS = 132;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        Log.d("yjyj", "In MainActivity");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
