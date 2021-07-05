@@ -40,13 +40,17 @@ import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
+import org.json.JSONException;
+
 import java.io.IOException;
+import java.nio.file.StandardWatchEventKinds;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.Locale;
+import java.util.concurrent.Executors;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -99,19 +103,35 @@ public class Fragment3<isLocationAvailable> extends Fragment {
     }
 
     static Context mContext;
-    Switch sw;
-    boolean isSwitchOn = false;
+    static Switch sw;
+    static boolean isSwitchOn = false;
     String address;
     boolean isLocationAvailable = false;
     GpsTracker gpsTracker;
     ViewGroup viewGroup;
+    double latitude, longitude;
+    static double converted_x, converted_y;
+    static String pass_date;
+    static String pass_time;
+    static TimePicker mTimePicker;
+    static Date currentDateTime;
+    static Calendar calendar;
+    static boolean is_rain;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragments
         viewGroup = (ViewGroup) inflater.inflate(R.layout.fragment_3, container, false);
-        TimePicker mTimePicker = (TimePicker) viewGroup.findViewById(R.id.timePicker);
+        mTimePicker = (TimePicker) viewGroup.findViewById(R.id.timePicker);
+
+        mTimePicker.setOnTimeChangedListener(new TimePicker.OnTimeChangedListener() {
+            @Override
+            public void onTimeChanged(TimePicker view, int hourOfDay, int minute) {
+                sw.setChecked(false);
+            }
+        }
+    );
 
         mContext = getContext();
 
@@ -129,56 +149,51 @@ public class Fragment3<isLocationAvailable> extends Fragment {
          */
 
         //이전 설정값으로 TimePicker 초기화
-        Date currentTime = nextNotifyTime.getTime();
-        SimpleDateFormat HourFormat = new SimpleDateFormat("kk", Locale.getDefault());
-        SimpleDateFormat MinuteFormat = new SimpleDateFormat("mm", Locale.getDefault());
 
-        int pre_hour = Integer.parseInt(HourFormat.format(currentTime));
-        int pre_minute = Integer.parseInt((MinuteFormat.format(currentTime)));
+        Log.d("switch test22", String.valueOf(isSwitchOn));
+        if (!isSwitchOn) {
+            Date currentTime = nextNotifyTime.getTime();
 
-        mTimePicker.setHour(pre_hour);
-        mTimePicker.setMinute(pre_minute);
+            SimpleDateFormat HourFormat = new SimpleDateFormat("kk", Locale.getDefault());
+            SimpleDateFormat MinuteFormat = new SimpleDateFormat("mm", Locale.getDefault());
 
-        /**Button button = (Button) viewGroup.findViewById(R.id.button1);
-        button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                int hour, minute;
-                hour = mTimePicker.getHour();
-                minute = mTimePicker.getMinute();
+            int pre_hour = Integer.parseInt(HourFormat.format(currentTime));
+            int pre_minute = Integer.parseInt((MinuteFormat.format(currentTime)));
 
-                Calendar calendar = Calendar.getInstance();
-                calendar.setTimeInMillis(System.currentTimeMillis());
-                calendar.set(Calendar.HOUR_OF_DAY, hour);
-                calendar.set(Calendar.MINUTE, minute);
-                calendar.set(Calendar.SECOND, 0);
+            mTimePicker.setHour(pre_hour);
+            mTimePicker.setMinute(pre_minute);
+        }
+        else {
+            SimpleDateFormat HourFormat = new SimpleDateFormat("kk", Locale.getDefault());
+            SimpleDateFormat MinuteFormat = new SimpleDateFormat("mm", Locale.getDefault());
 
-                if (calendar.before(Calendar.getInstance())) {
-                    calendar.add(Calendar.DATE, 1);
-                }
-                Date currentDateTime = calendar.getTime();
-                String date_text = new SimpleDateFormat("yyyy년 MM월 dd일 EE요일 a hh시 mm분", Locale.getDefault()).format(currentDateTime);
-                Toast.makeText(viewGroup.getContext().getApplicationContext(), date_text + "으로 알람이 설정되었습니다", Toast.LENGTH_SHORT).show();
+            int pre_hour = Integer.parseInt(HourFormat.format(currentDateTime));
+            int pre_minute = Integer.parseInt((MinuteFormat.format(currentDateTime)));
 
-                SharedPreferences.Editor editor = getContext().getSharedPreferences("daily alarm", Context.MODE_PRIVATE).edit();
-                editor.putLong("nextNotifyTime", (long) calendar.getTimeInMillis());
-                editor.apply();
+            mTimePicker.setHour(pre_hour);
+            mTimePicker.setMinute(pre_minute);
 
-                diaryNotification(calendar);
-            }
-        });*/
+            pass_time = new SimpleDateFormat("hhmm", Locale.getDefault()).format(currentDateTime);
+
+        }
 
         sw = viewGroup.findViewById(R.id.switch1);
+        if (isSwitchOn) sw.setChecked(true);
+        else sw.setChecked(false);
+
         sw.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v) {
                 CheckState();
                 if (isSwitchOn){
+                    Log.d("switch test", "isSwitchOn");
+                    sw.setChecked(true);
+
                     int hour, minute;
                     hour = mTimePicker.getHour();
                     minute = mTimePicker.getMinute();
 
-                    Calendar calendar = Calendar.getInstance();
+                    calendar = Calendar.getInstance();
                     calendar.setTimeInMillis(System.currentTimeMillis());
                     calendar.set(Calendar.HOUR_OF_DAY, hour);
                     calendar.set(Calendar.MINUTE, minute);
@@ -187,8 +202,23 @@ public class Fragment3<isLocationAvailable> extends Fragment {
                     if (calendar.before(Calendar.getInstance())) {
                         calendar.add(Calendar.DATE, 1);
                     }
-                    Date currentDateTime = calendar.getTime();
-                    String date_text = new SimpleDateFormat("yyyy년 MM월 dd일 EE요일 a hh시 mm분", Locale.getDefault()).format(currentDateTime);
+                    currentDateTime = calendar.getTime();
+                    String date_text = new SimpleDateFormat("hh시 mm분", Locale.getDefault()).format(currentDateTime);
+                    pass_date = new SimpleDateFormat("yyyyMMdd", Locale.getDefault()).format(currentDateTime);
+                    pass_time = new SimpleDateFormat("hhmm", Locale.getDefault()).format(currentDateTime);
+                    Log.d("pass_testtest", pass_date);
+                    Log.d("pass_testtest", pass_time);
+
+                    SimpleDateFormat HourFormat = new SimpleDateFormat("kk", Locale.getDefault());
+                    SimpleDateFormat MinuteFormat = new SimpleDateFormat("mm", Locale.getDefault());
+
+                    int pre_hour = Integer.parseInt(HourFormat.format(currentDateTime));
+                    int pre_minute = Integer.parseInt((MinuteFormat.format(currentDateTime)));
+
+                    mTimePicker.setHour(pre_hour);
+                    mTimePicker.setMinute(pre_minute);
+
+
                     Toast.makeText(viewGroup.getContext().getApplicationContext(), date_text + "으로 알람이 설정되었습니다", Toast.LENGTH_SHORT).show();
 
                     SharedPreferences.Editor editor = getContext().getSharedPreferences("daily alarm", Context.MODE_PRIVATE).edit();
@@ -198,6 +228,7 @@ public class Fragment3<isLocationAvailable> extends Fragment {
                     diaryNotification(calendar);
                 }
                 else{
+                    sw.setChecked(false);
                     Toast.makeText(viewGroup.getContext().getApplicationContext(), "알람이 해제되었습니다", Toast.LENGTH_SHORT).show();
                 }
             }
@@ -207,6 +238,56 @@ public class Fragment3<isLocationAvailable> extends Fragment {
         if (!hasPermissions(mContext, s)) {
             requestLocationPermission();
         }
+        if (hasPermissions(mContext, s)){
+            isLocationAvailable = true;
+            gpsTracker = new GpsTracker(mContext);
+            Log.d("testtest", "after permission");
+
+            latitude = gpsTracker.getLatitude();
+            longitude = gpsTracker.getLongitude();
+
+            address = getCurrentAddress(latitude, longitude);
+
+            Log.d("testtest", "after getAddress");
+            TextView textview = (TextView) viewGroup.findViewById(R.id.textView);
+            textview.setText(Double.toString(latitude) + ' ' + Double.toString(longitude));
+            TextView textview2 = (TextView) viewGroup.findViewById(R.id.textView2);
+            textview2.setText(address);
+
+            Log.d("testtest", Double.toString(latitude) + ' ' + Double.toString(longitude));
+
+            convertGRID_GPS(latitude, longitude);
+
+            int hour, minute;
+            hour = mTimePicker.getHour();
+            minute = mTimePicker.getMinute();
+
+            calendar = Calendar.getInstance();
+            calendar.setTimeInMillis(System.currentTimeMillis());
+            calendar.set(Calendar.HOUR_OF_DAY, hour);
+            calendar.set(Calendar.MINUTE, minute);
+            calendar.set(Calendar.SECOND, 0);
+
+            if (calendar.before(Calendar.getInstance())) {
+                calendar.add(Calendar.DATE, 1);
+            }
+
+            currentDateTime = calendar.getTime();
+            pass_time = new SimpleDateFormat("hhmm", Locale.getDefault()).format(currentDateTime);
+
+            final Weather at = new Weather();
+            Executors.newSingleThreadExecutor().execute(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        at.func();
+                    } catch (IOException | JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+            });
+        }
+
 
         return viewGroup;
     }
@@ -227,7 +308,6 @@ public class Fragment3<isLocationAvailable> extends Fragment {
             }
             else return null;
 
-
         } catch (IOException ioException) {
             Toast.makeText(mContext, "지오코더 서비스 사용불가", Toast.LENGTH_LONG).show();
             requestLocationPermission();
@@ -239,38 +319,7 @@ public class Fragment3<isLocationAvailable> extends Fragment {
         }
     }
 
-    /**private void showDialogForLocationServiceSetting(){
-        AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
-        builder.setTitle("위치 서비스 비활성화");
-        builder.setMessage("앱을 사용하기 위해서는 위치 서비스가 필요합니다.\n");
-        builder.setCancelable(true);
-        builder.setPositiveButton("설정", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                Intent callGPSSettingIntent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
-                startActivityForResult(callGPSSettingIntent, GPS_ENABLE_REQUEST_CODE);
-            }
-        });
-        builder.setNegativeButton("취소", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.cancel();
-            }
-        });
-        if (! ((Activity) mContext).isFinishing()){
-            builder.create().show();
-
-        }
-    }*/
-
     protected void requestLocationPermission() {
-        /**if (ActivityCompat.shouldShowRequestPermissionRationale((Activity) mContext,
-                android.Manifest.permission.ACCESS_FINE_LOCATION)) {
-            // show UI part if you want here to show some rationale !!!
-        } else {
-            requestPermissions(new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION},
-                    REQUEST_F_LOCATION);
-        }*/
         if (ActivityCompat.shouldShowRequestPermissionRationale((Activity) mContext,
                 android.Manifest.permission.ACCESS_FINE_LOCATION)) {
             // show UI part if you want here to show some rationale !!!
@@ -290,8 +339,8 @@ public class Fragment3<isLocationAvailable> extends Fragment {
                     gpsTracker = new GpsTracker(mContext);
                     Log.d("testtest", "after permission");
 
-                    double latitude = gpsTracker.getLatitude();
-                    double longitude = gpsTracker.getLongitude();
+                    latitude = gpsTracker.getLatitude();
+                    longitude = gpsTracker.getLongitude();
 
                     address = getCurrentAddress(latitude, longitude);
                     Log.d("testtest", "after getAddress");
@@ -302,6 +351,24 @@ public class Fragment3<isLocationAvailable> extends Fragment {
                     textview2.setText(address);
 
                     Log.d("testtest", Double.toString(latitude) + ' ' + Double.toString(longitude));
+
+                    convertGRID_GPS(latitude, longitude);
+                    pass_time = new SimpleDateFormat("hhmm", Locale.getDefault()).format(currentDateTime);
+
+                    Log.d("testtest", converted_x + " " + converted_y);
+
+                    final Weather at = new Weather();
+                    Executors.newSingleThreadExecutor().execute(new Runnable() {
+                        @Override
+                        public void run() {
+                            try {
+                                at.func();
+                            } catch (IOException | JSONException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    });
+
                 }
                 else isLocationAvailable = false;
                 return;
@@ -347,7 +414,7 @@ public class Fragment3<isLocationAvailable> extends Fragment {
 
     void diaryNotification(Calendar calendar){
         Boolean dailyNotify = false;
-        if (isSwitchOn) dailyNotify = true;
+        if (isSwitchOn && is_rain) dailyNotify = true;
         else dailyNotify = false;
 
         PackageManager pm = mContext.getPackageManager();
@@ -365,5 +432,47 @@ public class Fragment3<isLocationAvailable> extends Fragment {
             }
             pm.setComponentEnabledSetting(receiver, PackageManager.COMPONENT_ENABLED_STATE_ENABLED, PackageManager.DONT_KILL_APP);
         }
+    }
+
+    private void convertGRID_GPS(double lat_X, double lng_Y )
+    {
+        double RE = 6371.00877; // 지구 반경(km)
+        double GRID = 5.0; // 격자 간격(km)
+        double SLAT1 = 30.0; // 투영 위도1(degree)
+        double SLAT2 = 60.0; // 투영 위도2(degree)
+        double OLON = 126.0; // 기준점 경도(degree)
+        double OLAT = 38.0; // 기준점 위도(degree)
+        double XO = 43; // 기준점 X좌표(GRID)
+        double YO = 136; // 기1준점 Y좌표(GRID)
+
+        //
+        // LCC DFS 좌표변환 ( code : "TO_GRID"(위경도->좌표, lat_X:위도,  lng_Y:경도), "TO_GPS"(좌표->위경도,  lat_X:x, lng_Y:y) )
+        //
+
+
+        double DEGRAD = Math.PI / 180.0;
+        double RADDEG = 180.0 / Math.PI;
+
+        double re = RE / GRID;
+        double slat1 = SLAT1 * DEGRAD;
+        double slat2 = SLAT2 * DEGRAD;
+        double olon = OLON * DEGRAD;
+        double olat = OLAT * DEGRAD;
+
+        double sn = Math.tan(Math.PI * 0.25 + slat2 * 0.5) / Math.tan(Math.PI * 0.25 + slat1 * 0.5);
+        sn = Math.log(Math.cos(slat1) / Math.cos(slat2)) / Math.log(sn);
+        double sf = Math.tan(Math.PI * 0.25 + slat1 * 0.5);
+        sf = Math.pow(sf, sn) * Math.cos(slat1) / sn;
+        double ro = Math.tan(Math.PI * 0.25 + olat * 0.5);
+        ro = re * sf / Math.pow(ro, sn);
+
+        double ra = Math.tan(Math.PI * 0.25 + (lat_X) * DEGRAD * 0.5);
+        ra = re * sf / Math.pow(ra, sn);
+        double theta = lng_Y * DEGRAD - olon;
+        if (theta > Math.PI) theta -= 2.0 * Math.PI;
+        if (theta < -Math.PI) theta += 2.0 * Math.PI;
+        theta *= sn;
+        converted_x = Math.floor(ra * Math.sin(theta) + XO + 0.5);
+        converted_y = Math.floor(ro - ra * Math.cos(theta) + YO + 0.5);
     }
 }

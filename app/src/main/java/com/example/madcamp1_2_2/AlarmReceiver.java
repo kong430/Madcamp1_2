@@ -47,7 +47,7 @@ public class AlarmReceiver extends BroadcastReceiver {
         builder.setAutoCancel(true).setDefaults(NotificationCompat.DEFAULT_ALL)
                 .setWhen(System.currentTimeMillis())
                 .setContentTitle("우산 챙기세용")
-                .setContentText("장마철이라 비가 언제 올지 몰라요ㅠㅠ")
+                .setContentText("오늘은 강수확률이 30% 이상입니다!")
                 .setContentInfo("INFO")
                 .setContentIntent(pendingI);
 
