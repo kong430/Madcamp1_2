@@ -26,8 +26,12 @@ import androidx.core.app.ActivityCompat;
 import java.util.ArrayList;
 
 public class PlusActivity extends AppCompatActivity {
+
+    Activity mActivity;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        mActivity = this;
         Log.d("yjyj", "In PlusActivity");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_plus);
@@ -82,8 +86,22 @@ public class PlusActivity extends AppCompatActivity {
                 }
                 Intent intent = new Intent();
                 setResult(RESULT_OK, intent);
-                finish();
+                Intent intent_start = new Intent(mActivity, MainActivity.class);
+                startActivity(intent_start);
             }
         });
+    }
+
+    @Override
+    protected void onPause() {
+        Log.d("yjyj", "In Plus, onPuase");
+        super.onPause();
+        finish();
+    }
+
+    @Override
+    protected void onStop() {
+        Log.d("yjyj", "In Plus, onStop");
+        super.onStop();
     }
 }

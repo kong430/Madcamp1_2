@@ -97,6 +97,7 @@ public class Fragment1 extends Fragment {
                              Bundle savedInstanceState) {
         Log.d("yjyj", "In Fragment1, onCreateView");
 
+        mActivity = getActivity();
         mContext = getActivity().getApplicationContext();
 
         v = (ViewGroup) inflater.inflate(R.layout.fragment_1, container, false);
@@ -158,5 +159,18 @@ public class Fragment1 extends Fragment {
             }
             return convertView;
         }
+    }
+
+    @Override
+    public void onPause() {
+        Log.d("yjyj", "In Frag1, onPuase");
+        super.onPause();
+        mActivity.finish();
+    }
+
+    @Override
+    public void onStop() {
+        Log.d("yjyj", "In Frag1, onStop");
+        super.onStop();
     }
 }
