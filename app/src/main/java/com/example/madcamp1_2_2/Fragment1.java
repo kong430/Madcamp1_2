@@ -3,27 +3,33 @@ package com.example.madcamp1_2_2;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
+
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentTransaction;
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
+
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.EditText;
+import android.widget.Filter;
+import android.widget.Filterable;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+
+import org.w3c.dom.Text;
+
 import java.util.ArrayList;
 import static android.app.Activity.RESULT_OK;
 
@@ -86,6 +92,7 @@ public class Fragment1 extends Fragment {
     static Contact contact = new Contact();
     ViewGroup v;
     ListView listView;
+    String searchKey;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -129,6 +136,56 @@ public class Fragment1 extends Fragment {
             }
         });
 
+        LinearLayout linearlayout = v.findViewById(R.id.linearlayout);
+        EditText search = v.findViewById(R.id.search);
+        search.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                String filterText = s.toString();
+                if (filterText.length() > 0) {
+                    listView.setFilterText(filterText);
+                } else {
+                    listView.clearTextFilter();
+                }
+            }
+        });
+
+        listView.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                switch (event.getAction()) {
+                    case MotionEvent.ACTION_DOWN: {
+                        linearlayout.setVisibility(View.INVISIBLE);
+                        fab.setVisibility(View.INVISIBLE);
+                        //터치 되었을 떄
+                        break;
+                    }
+                    case MotionEvent.ACTION_CANCEL:
+                    case MotionEvent.ACTION_UP: {
+                        linearlayout.setVisibility(View.VISIBLE);
+                        fab.setVisibility(View.VISIBLE);
+                        //터치 안되었을 떄
+                        break;
+                    }
+                    default: {
+                        break;
+                    }
+                }
+                return false;
+            }
+        });
+
+
         // Inflate the layout for this fragment
         return v;
     }
@@ -141,7 +198,7 @@ public class Fragment1 extends Fragment {
         }
     }
 
-    private class ContactAdapter extends ArrayAdapter<PhoneBook> {
+    private class ContactAdapter extends ArrayAdapter<PhoneBook> implements Filterable {
         private ArrayList<PhoneBook> items;
         public ContactAdapter(Context context, int textViewResourceId, ArrayList<PhoneBook> items) {
             super(context, textViewResourceId, items);
@@ -172,13 +229,67 @@ public class Fragment1 extends Fragment {
             }
             return convertView;
         }
+
+        Filter listFilter;
+
+        @NonNull
+        @Override
+        public Filter getFilter() {
+            if(listFilter == null) {
+                    listFilter = new ListFilter();
+             }
+
+            return listFilter;
+        }
+
+        private class ListFilter extends Filter {
+
+            @Override
+            protected FilterResults performFiltering(CharSequence constraint) {
+                FilterResults results = new FilterResults() ;
+
+                if (constraint == null || constraint.length() == 0) {
+                    results.values = items;
+                    results.count = items.size() ;
+                } else {
+                    ArrayList<PhoneBook> itemList = new ArrayList<PhoneBook>() ;
+
+                    for (PhoneBook item : items) {
+                        if (item.getName().toUpperCase().contains(constraint.toString().toUpperCase()) ||
+                                item.getTel().toUpperCase().contains(constraint.toString().toUpperCase()))
+                        {
+                            itemList.add(item) ;
+                        }
+                    }
+
+                    results.values = itemList ;
+                    results.count = itemList.size() ;
+                }
+                return results;
+            }
+
+            @Override
+            protected void publishResults(CharSequence constraint, FilterResults results) {
+
+                // update listview by filtered data list.
+                items = (ArrayList<PhoneBook>) results.values ;
+
+                // notify
+                if (results.count > 0) {
+                    notifyDataSetChanged() ;
+                } else {
+                    notifyDataSetInvalidated() ;
+                }
+            }
+        }
     }
+
 
     @Override
     public void onPause() {
         Log.d("yjyj", "In Frag1, onPuase");
         super.onPause();
-        mActivity.finish();
+        //mActivity.finish();
     }
 
     @Override
