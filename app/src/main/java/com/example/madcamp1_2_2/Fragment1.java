@@ -7,6 +7,7 @@ import android.net.Uri;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import android.text.Editable;
@@ -137,23 +138,27 @@ public class Fragment1 extends Fragment {
         });
 
         LinearLayout linearlayout = v.findViewById(R.id.linearlayout);
-        EditText search = v.findViewById(R.id.search);
+        EditText search = (EditText) v.findViewById(R.id.search);
         search.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+                Log.d("yjyj", "before text changed");
 
             }
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
+                Log.d("yjyj", "on text changed");
 
             }
 
             @Override
             public void afterTextChanged(Editable s) {
+                Log.d("yjyj", "after text changed");
                 String filterText = s.toString();
                 if (filterText.length() > 0) {
-                    listView.setFilterText(filterText);
+                    ((ContactAdapter)listView.getAdapter()).getFilter().filter(filterText);
+                    //listView.setFilterText(filterText);
                 } else {
                     listView.clearTextFilter();
                 }
@@ -200,15 +205,24 @@ public class Fragment1 extends Fragment {
 
     private class ContactAdapter extends ArrayAdapter<PhoneBook> implements Filterable {
         private ArrayList<PhoneBook> items;
+        private ArrayList<PhoneBook> filteredItems;
+        Filter listFilter;
+
         public ContactAdapter(Context context, int textViewResourceId, ArrayList<PhoneBook> items) {
             super(context, textViewResourceId, items);
             this.items = items;
+            this.filteredItems = items;
+        }
+
+        @Override
+        public int getCount() {
+            return filteredItems.size();
         }
 
         @Override
         // 여기서 리스트 보여주는 거임
         public View getView(int position, View convertView, ViewGroup parent) {
-            Log.d("yjyj", "In Fragment1, called getView");
+            //Log.d("yjyj", "In Fragment1, called getView");
             final int pos = position;
             final Context context = parent.getContext();
             if (convertView == null) {
@@ -216,7 +230,8 @@ public class Fragment1 extends Fragment {
                 convertView = inflater.inflate(R.layout.row, parent, false);
             }
 
-            PhoneBook p = items.get(position);
+            PhoneBook p = filteredItems.get(position);
+
             if (p != null) {
                 TextView tt = (TextView) convertView.findViewById(R.id.toptext);
                 TextView bt = (TextView) convertView.findViewById(R.id.bottomtext);
@@ -230,14 +245,23 @@ public class Fragment1 extends Fragment {
             return convertView;
         }
 
-        Filter listFilter;
+        @Override
+        public long getItemId(int position) {
+            return position;
+        }
+
+        @Nullable
+        @Override
+        public PhoneBook getItem(int position) {
+            return filteredItems.get(position);
+        }
 
         @NonNull
         @Override
         public Filter getFilter() {
             if(listFilter == null) {
-                    listFilter = new ListFilter();
-             }
+                listFilter = new ListFilter();
+            }
 
             return listFilter;
         }
@@ -246,11 +270,11 @@ public class Fragment1 extends Fragment {
 
             @Override
             protected FilterResults performFiltering(CharSequence constraint) {
-                FilterResults results = new FilterResults() ;
+                FilterResults results = new FilterResults();
 
                 if (constraint == null || constraint.length() == 0) {
                     results.values = items;
-                    results.count = items.size() ;
+                    results.count = items.size();
                 } else {
                     ArrayList<PhoneBook> itemList = new ArrayList<PhoneBook>() ;
 
@@ -270,10 +294,8 @@ public class Fragment1 extends Fragment {
 
             @Override
             protected void publishResults(CharSequence constraint, FilterResults results) {
-
                 // update listview by filtered data list.
-                items = (ArrayList<PhoneBook>) results.values ;
-
+                filteredItems = (ArrayList<PhoneBook>) results.values;
                 // notify
                 if (results.count > 0) {
                     notifyDataSetChanged() ;
@@ -283,7 +305,6 @@ public class Fragment1 extends Fragment {
             }
         }
     }
-
 
     @Override
     public void onPause() {
