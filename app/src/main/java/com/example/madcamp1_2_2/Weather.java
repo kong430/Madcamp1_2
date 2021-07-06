@@ -17,6 +17,8 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.Locale;
 
+import static com.example.madcamp1_2_2.Fragment3.converted_x;
+import static com.example.madcamp1_2_2.Fragment3.converted_y;
 import static com.example.madcamp1_2_2.Fragment3.pass_time;
 
 public class Weather extends Thread{
@@ -36,9 +38,11 @@ public class Weather extends Thread{
         Log.d("weather", baseDate);
         String baseTime = pass_time; //원하는 시간
         Log.d("weather", baseTime);
+        Log.d("weather2", String.valueOf((int) Math.round(converted_x)));
 
-        String nx = "98"; //위경도임.
-        String ny = "77"; //위경도 정보는 api문서 볼 것
+        String nx = Integer.toString((int) Math.round(converted_x)); //위경도임.
+        Log.d("weather3", nx);
+        String ny = Integer.toString((int) Math.round(converted_y)); //위경도 정보는 api문서 볼 것
         Log.d("pass_testtest2", nx + ' ' + ny);
 
 
@@ -50,6 +54,8 @@ public class Weather extends Thread{
                 +"&base_time="+baseTime
                 +"&nx="+nx
                 +"&ny="+ny;
+
+        Log.d("weather test", s);
 
         URL url = new URL(s);
         HttpURLConnection conn = (HttpURLConnection) url.openConnection();

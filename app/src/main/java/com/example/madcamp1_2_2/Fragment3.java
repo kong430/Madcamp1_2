@@ -249,10 +249,9 @@ public class Fragment3<isLocationAvailable> extends Fragment {
             address = getCurrentAddress(latitude, longitude);
 
             Log.d("testtest", "after getAddress");
-            TextView textview = (TextView) viewGroup.findViewById(R.id.textView);
-            textview.setText(Double.toString(latitude) + ' ' + Double.toString(longitude));
+
             TextView textview2 = (TextView) viewGroup.findViewById(R.id.textView2);
-            textview2.setText(address);
+            textview2.setText("현재 위치 : " + address);
 
             Log.d("testtest", Double.toString(latitude) + ' ' + Double.toString(longitude));
 
@@ -345,10 +344,8 @@ public class Fragment3<isLocationAvailable> extends Fragment {
                     address = getCurrentAddress(latitude, longitude);
                     Log.d("testtest", "after getAddress");
 
-                    TextView textview = (TextView) viewGroup.findViewById(R.id.textView);
-                    textview.setText(Double.toString(latitude) + ' ' + Double.toString(longitude));
                     TextView textview2 = (TextView) viewGroup.findViewById(R.id.textView2);
-                    textview2.setText(address);
+                    textview2.setText("현재 위치 : " + address);
 
                     Log.d("testtest", Double.toString(latitude) + ' ' + Double.toString(longitude));
 
