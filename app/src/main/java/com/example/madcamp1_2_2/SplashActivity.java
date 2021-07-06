@@ -38,6 +38,18 @@ public class SplashActivity  extends AppCompatActivity {
         checkPermission(Manifest.permission.READ_CONTACTS, REQUEST_READ_CONTACTS);
         checkPermission(Manifest.permission.WRITE_CONTACTS, REQUEST_WRITE_CONTACTS);
 
+        if(permissionCount >= 1) {
+            handler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    Log.d("yjyj", "in postdelay");
+                    Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+                    startActivity(intent);
+                    finish();
+                }
+            }, 1000);
+        }
+
         Log.d("yjyj", "count is" + permissionCount);
     }
 
@@ -47,14 +59,7 @@ public class SplashActivity  extends AppCompatActivity {
             ActivityCompat.requestPermissions(mActivity, new String[] { permission }, requestCode);
         }
         else {
-            handler.postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    Intent intent = new Intent(getApplicationContext(), MainActivity.class);
-                    startActivity(intent);
-                    finish();
-                }
-            }, 1000);
+            permissionCount++;
         }
     }
 
@@ -82,14 +87,6 @@ public class SplashActivity  extends AppCompatActivity {
                 }
                 break;
              }
-            default : handler.postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    Intent intent = new Intent(getApplicationContext(), MainActivity.class);
-                    startActivity(intent);
-                    finish();
-                }
-            }, 1000);
         }
     }
 
