@@ -6,6 +6,7 @@ import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
 
+import android.os.Parcelable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -83,10 +84,14 @@ public class Fragment2 extends Fragment {
 
         GridView gridViewImages = (GridView)galleryView.findViewById(R.id.gridview);
         ImageGridAdapter imageGridAdapter = new ImageGridAdapter(mContext, imageIDs);
+        Parcelable state = gridViewImages.onSaveInstanceState();
         gridViewImages.setAdapter(imageGridAdapter);
+
+        gridViewImages.onRestoreInstanceState(state);
 
         return galleryView;
     }
+
 
     private int[] imageIDs = new int[]{
             R.drawable.image1,
@@ -109,6 +114,16 @@ public class Fragment2 extends Fragment {
             R.drawable.image18,
             R.drawable.image19,
             R.drawable.image20,
+            R.drawable.image21,
+            R.drawable.image22,
+            R.drawable.image23,
+            R.drawable.image24,
+            R.drawable.image25,
+            R.drawable.image26,
+            R.drawable.image27,
+            R.drawable.image28,
+            R.drawable.image29,
+            R.drawable.image30,
     };
 
 }
