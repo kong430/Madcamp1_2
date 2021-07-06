@@ -4,5 +4,14 @@
     android:id="@+id/fragment2"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#673AB7"
-    tools:context=".Fragment2" />
+    android:background="#707070"
+    tools:context=".Fragment2" >
+
+    <GridView
+        android:id="@+id/gridview"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:horizontalSpacing="10dp"
+        android:numColumns="3"
+        android:verticalSpacing="10dp" />
+</FrameLayout>
