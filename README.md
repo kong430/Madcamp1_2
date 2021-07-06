@@ -1,4 +1,4 @@
-# ContactGalleryAndRain
+# ContactsGalleryAndRain
 
 > 김윤재, 박민경
 
@@ -6,18 +6,39 @@
 
 ### Overview
 
-> contact, gallery, rain_notification 기능을 담은 어플리케이션이다.
+> contacts, gallery, rain_notification 기능을 담은 어플리케이션이다.
 
 
 
 ### Main
 
+* TabLayout 과 ViewPager2 를 이용하여 구성하였다.
+
+* MyViewAdapter 를 구현하여 viewPager 에 셋팅하였다. MyViewAdapter 에서 Fragment를 생성하였으며, tabLayout 의 onTabSelectedListner 를 구현하여 viewPager 의 출력 Fragment 와 현재 출력 화면을 맞추었다.
 
 
-### Tab1
+### Tab1: Contacts
+
+> 연락처를 보여주는 탭으로 연락처 검색, 추가, 전화를 할 수 있다.
 
 
+<이미지 1> <이미지 2> <이미지 3>
 
+* 연락처 읽기, 쓰기 권한은 스플래시 화면이 출력되는 동안 권한을 허용받는다.
+
+* 상단에 있는 검색창을 통해 특정 연락처를 찾을 수 있다. <이미지 1>
+   
+   * Fragment1:ContactAdapter:ListFilter 를 구현하여 이용하였다. 필터링한 연락처 아이템을 Fragment1:ContactAdapter:getView() 를 통해 화면에 출력한다.
+ 
+* 오른쪽 하단에 있는 + 플로팅 버튼을 통해 새로운 연락처를 추가할 수 있다. <이미지 2>
+   
+   * 이름과 연락처를 입력하는 PlusActivity 를 실행하여 핸드폰에 연락처를 추가한다.
+   
+   * 연락처 리스트를 스크롤하는 동안에는 플로팅 버튼이 사라진다.
+
+* 특정 연락처를 눌러 전화를 걸 수 있다. <이미지 3>
+ 
+  * Intent.ACTION_DIAL 과 tel:00000000000 데이터를 이용하여 구현하였다.
 
 
 
