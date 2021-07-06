@@ -35,19 +35,15 @@ public class ImageGridAdapter extends BaseAdapter {
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         ImageView imageView = null;
-        if (null != convertView)
-            imageView = (ImageView)convertView;
-        else{
-            Bitmap bmp = BitmapFactory.decodeResource(context.getResources(), imageIDs[position]);
-            bmp = Bitmap.createScaledBitmap(bmp, 320, 320, false);
+        Bitmap bmp = BitmapFactory.decodeResource(context.getResources(), imageIDs[position]);
+        bmp = Bitmap.createScaledBitmap(bmp, 320, 320, false);
 
-            imageView = new ImageView(context);
-            imageView.setAdjustViewBounds(true);
-            imageView.setImageBitmap(bmp);
+        imageView = new ImageView(context);
+        imageView.setAdjustViewBounds(true);
+        imageView.setImageBitmap(bmp);
 
-            ImageClickListener imageViewClickListener = new ImageClickListener(context, imageIDs[position]);
-            imageView.setOnClickListener(imageViewClickListener);
-        }
+        ImageClickListener imageViewClickListener = new ImageClickListener(context, imageIDs[position]);
+        imageView.setOnClickListener(imageViewClickListener);
         return imageView;
     }
 }
