@@ -124,11 +124,12 @@ public class Fragment3<isLocationAvailable> extends Fragment {
         // Inflate the layout for this fragments
         viewGroup = (ViewGroup) inflater.inflate(R.layout.fragment_3, container, false);
         mTimePicker = (TimePicker) viewGroup.findViewById(R.id.timePicker);
+        //mTimePicker.setIs24HourView(true);
 
         mTimePicker.setOnTimeChangedListener(new TimePicker.OnTimeChangedListener() {
             @Override
             public void onTimeChanged(TimePicker view, int hourOfDay, int minute) {
-                sw.setChecked(false);
+                if (sw!=null) sw.setChecked(false);
             }
         }
     );
