@@ -1,4 +1,4 @@
-# ContactGalleryAndRain
+# ContactsGalleryAndRain
 
 > 김윤재, 박민경
 
@@ -6,7 +6,7 @@
 
 ### Overview
 
-> contact, gallery, rain_notification 기능을 담은 어플리케이션이다.
+> contacts, gallery, rain_notification 기능을 담은 어플리케이션이다.
 
 
 
@@ -17,7 +17,7 @@
 * MyViewAdapter 를 구현하여 viewPager 에 셋팅하였다. MyViewAdapter 에서 Fragment를 생성하였으며, tabLayout 의 onTabSelectedListner 를 구현하여 viewPager 의 출력 Fragment 와 현재 출력 화면을 맞추었다.
 
 
-### Tab1
+### Tab1: Contacts
 
 > 연락처를 보여주는 탭으로 연락처 검색, 추가, 전화를 할 수 있다.
 
