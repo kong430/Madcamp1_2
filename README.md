@@ -1,3 +1,5 @@
+
+
 # ContactsGalleryAndRain
 
 > 김윤재, 박민경
@@ -33,27 +35,32 @@
 
 > 연락처를 보여주는 탭으로 연락처 검색, 추가, 전화를 할 수 있다.
 
-
 ![1625585381151](https://user-images.githubusercontent.com/56385667/124627610-aa74d980-deba-11eb-802e-fd276c625a36.gif)
+
+- 연락처 읽기, 쓰기 권한은 스플래시 화면이 출력되는 동안 권한을 허용받는다.
+
+- 상단에 있는 검색창을 통해 특정 연락처를 찾을 수 있다. 
+
+  - Fragment1:ContactAdapter:ListFilter 를 구현하여 이용하였다. 필터링한 연락처 아이템을 Fragment1:ContactAdapter:getView() 를 통해 화면에 출력한다.
+
+    
+
 ![1625585383552](https://user-images.githubusercontent.com/56385667/124627972-f9227380-deba-11eb-8f91-804423ec2251.gif)
+
+
+* 오른쪽 하단에 있는 + 플로팅 버튼을 통해 새로운 연락처를 추가할 수 있다.
+  
+   * 이름과 연락처를 입력하는 PlusActivity 를 실행하여 핸드폰에 연락처를 추가한다.
+   * 연락처 리스트를 스크롤하는 동안에는 플로팅 버튼이 사라진다.
+   
+
+
+
 ![1625585379745](https://user-images.githubusercontent.com/56385667/124627503-9335ec00-deba-11eb-8cf1-413e3e8085fc.gif)
 
 
-<이미지 1> <이미지 2> <이미지 3>
 
-* 연락처 읽기, 쓰기 권한은 스플래시 화면이 출력되는 동안 권한을 허용받는다.
-
-* 상단에 있는 검색창을 통해 특정 연락처를 찾을 수 있다. <이미지 1>
-  
-   * Fragment1:ContactAdapter:ListFilter 를 구현하여 이용하였다. 필터링한 연락처 아이템을 Fragment1:ContactAdapter:getView() 를 통해 화면에 출력한다.
-
-* 오른쪽 하단에 있는 + 플로팅 버튼을 통해 새로운 연락처를 추가할 수 있다. <이미지 2>
-  
-   * 이름과 연락처를 입력하는 PlusActivity 를 실행하여 핸드폰에 연락처를 추가한다.
-   
-   * 연락처 리스트를 스크롤하는 동안에는 플로팅 버튼이 사라진다.
-
-* 특정 연락처를 눌러 전화를 걸 수 있다. <이미지 3>
+* 특정 연락처를 눌러 전화를 걸 수 있다.
 
   * Intent.ACTION_DIAL 과 tel:00000000000 데이터를 이용하여 구현하였다.
 
@@ -75,8 +82,8 @@
   * GridView는 bitmap 객체로 정의된 ImageView로 구성되어 있음
 
   * 이미지 파일은 res/drawable 폴더에 정의되어 있음
-
-<이미지 2>
+  
+    
 
 * 특정 이미지 터치 시 확대
   * ImageActivity 클래스를 정의하여 확대된 사진을 보여줌
@@ -105,8 +112,6 @@
     TimePicker를 재설정할 시, Switch가 자동으로 off되고 기존에 설정되어 있던 알림은 자동으로 삭제됨
 
     
-
-<이미지 2>
 
 * Notification은 비가 오는 날, 사용자가 설정한 시간에 활성화됨.
 
