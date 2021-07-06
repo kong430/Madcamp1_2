@@ -88,7 +88,7 @@ public class Weather extends Thread{
                 Fragment3.is_rain = true;
                 break;
             }
-            else Fragment3.is_rain = false;
+            else Fragment3.is_rain = true;
         }
     }
 }
