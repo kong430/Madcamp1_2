@@ -156,7 +156,7 @@ public class Fragment1 extends Fragment {
             public void afterTextChanged(Editable s) {
                 Log.d("yjyj", "after text changed");
                 String filterText = s.toString();
-                if (filterText.length() > 0) {
+                if (filterText.length() >= 0) {
                     ((ContactAdapter)listView.getAdapter()).getFilter().filter(filterText);
                     //listView.setFilterText(filterText);
                 } else {
@@ -170,14 +170,14 @@ public class Fragment1 extends Fragment {
             public boolean onTouch(View v, MotionEvent event) {
                 switch (event.getAction()) {
                     case MotionEvent.ACTION_DOWN: {
-                        linearlayout.setVisibility(View.INVISIBLE);
+                        //linearlayout.setVisibility(View.INVISIBLE);
                         fab.setVisibility(View.INVISIBLE);
                         //터치 되었을 떄
                         break;
                     }
                     case MotionEvent.ACTION_CANCEL:
                     case MotionEvent.ACTION_UP: {
-                        linearlayout.setVisibility(View.VISIBLE);
+                        //linearlayout.setVisibility(View.VISIBLE);
                         fab.setVisibility(View.VISIBLE);
                         //터치 안되었을 떄
                         break;
