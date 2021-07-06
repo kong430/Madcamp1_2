@@ -118,6 +118,10 @@ public class Fragment1 extends Fragment {
 
         ContactAdapter adapter = new ContactAdapter(mContext, R.layout.row, contact.datas);
         listView.setAdapter(adapter);
+        int index = listView.getFirstVisiblePosition();
+        View b = listView.getChildAt(0);
+        int top = (b == null) ? 0 : (b.getTop() - listView.getPaddingTop());
+        listView.setSelectionFromTop(index, top);
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -142,19 +146,19 @@ public class Fragment1 extends Fragment {
         search.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-                Log.d("yjyj", "before text changed");
+                //Log.d("yjyj", "before text changed");
 
             }
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                Log.d("yjyj", "on text changed");
+                //Log.d("yjyj", "on text changed");
 
             }
 
             @Override
             public void afterTextChanged(Editable s) {
-                Log.d("yjyj", "after text changed");
+                //Log.d("yjyj", "after text changed");
                 String filterText = s.toString();
                 if (filterText.length() >= 0) {
                     ((ContactAdapter)listView.getAdapter()).getFilter().filter(filterText);
@@ -207,6 +211,7 @@ public class Fragment1 extends Fragment {
         private ArrayList<PhoneBook> items;
         private ArrayList<PhoneBook> filteredItems;
         Filter listFilter;
+
 
         public ContactAdapter(Context context, int textViewResourceId, ArrayList<PhoneBook> items) {
             super(context, textViewResourceId, items);
@@ -304,6 +309,12 @@ public class Fragment1 extends Fragment {
                 }
             }
         }
+    }
+
+    @Override
+    public void onResume() {
+        Log.d("yjyj", "In Frag1, onResume");
+        super.onResume();
     }
 
     @Override
