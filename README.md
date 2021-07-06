@@ -33,7 +33,11 @@
 
 > 연락처를 보여주는 탭으로 연락처 검색, 추가, 전화를 할 수 있다.
 
-![Contacts_전화](C:\Users\박민경님\Desktop\몰입캠프_1\Contacts_전화.gif) 
+
+![1625585381151](https://user-images.githubusercontent.com/56385667/124627610-aa74d980-deba-11eb-802e-fd276c625a36.gif)
+![1625585383552](https://user-images.githubusercontent.com/56385667/124627972-f9227380-deba-11eb-8f91-804423ec2251.gif)
+![1625585379745](https://user-images.githubusercontent.com/56385667/124627503-9335ec00-deba-11eb-8cf1-413e3e8085fc.gif)
+
 
 <이미지 1> <이미지 2> <이미지 3>
 
@@ -64,7 +68,7 @@
 
 > 여러 장의 이미지를 갤러리처럼 보여주는 탭으로,  이미지를 터치하면 해당 이미지만 확대하여 볼 수 있다.
 
-<이미지 1>
+![1625585385992](https://user-images.githubusercontent.com/56385667/124628029-0a6b8000-debb-11eb-8d29-4fa60e22f7cb.gif)
 
 * 초기 화면은 1개의 GridView로 이미지를 나타냄
 
@@ -85,7 +89,7 @@
 
 > 비가 오는 날 사용자가 우산을 챙겨갈 수 있도록 Notification을 보낸다.
 
-<이미지 1>
+![1625585384764](https://user-images.githubusercontent.com/56385667/124628105-1d7e5000-debb-11eb-960b-dace68193458.gif)
 
 * 초기 화면은 TimePicker, Button, 사용자의 현재 위치정보로 이루어짐
   * 위치정보
