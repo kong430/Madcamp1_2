@@ -39,7 +39,7 @@ public class ImageGridAdapter extends BaseAdapter {
             imageView = (ImageView)convertView;
         else{
             Bitmap bmp = BitmapFactory.decodeResource(context.getResources(), imageIDs[position]);
-            bmp = Bitmap.createScaledBitmap(bmp, 320, 240, false);
+            bmp = Bitmap.createScaledBitmap(bmp, 320, 320, false);
 
             imageView = new ImageView(context);
             imageView.setAdjustViewBounds(true);

@@ -19,6 +19,7 @@ public class SplashActivity  extends AppCompatActivity {
     // Request code for READ_CONTACTS. It can be any number > 0.
     public static final int REQUEST_READ_CONTACTS = 79;
     public static final int REQUEST_WRITE_CONTACTS = 132;
+    private static final int REQUEST_F_LOCATION = 101;
 
     Activity mActivity;
     Context mContext;
@@ -35,9 +36,21 @@ public class SplashActivity  extends AppCompatActivity {
         mContext = getApplicationContext();
         handler = new Handler();
 
-        checkPermission(Manifest.permission.READ_CONTACTS, REQUEST_READ_CONTACTS);
-        checkPermission(Manifest.permission.WRITE_CONTACTS, REQUEST_WRITE_CONTACTS);
+        String[] s = new String[]{"android.permission.ACCESS_FINE_LOCATION", "android.permission.READ_CONTACTS", "android.permission.WRITE_CONTACTS"};
+        if(hasPermissions(mContext, s)) {
+            handler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    Log.d("yjyj", "in postdelay");
+                    Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+                    startActivity(intent);
+                    finish();
+                }
+            }, 1000);
+        }
 
+
+        checkPermission(Manifest.permission.ACCESS_FINE_LOCATION, REQUEST_F_LOCATION);
         Log.d("yjyj", "count is" + permissionCount);
     }
 
@@ -47,14 +60,7 @@ public class SplashActivity  extends AppCompatActivity {
             ActivityCompat.requestPermissions(mActivity, new String[] { permission }, requestCode);
         }
         else {
-            handler.postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    Intent intent = new Intent(getApplicationContext(), MainActivity.class);
-                    startActivity(intent);
-                    finish();
-                }
-            }, 1000);
+            permissionCount++;
         }
     }
 
@@ -66,6 +72,8 @@ public class SplashActivity  extends AppCompatActivity {
                 if (grantResults.length > 0
                         && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     Log.d("yjyj", "In Splash Activity, case Read");
+                    permissionCount++;
+                    checkPermission(Manifest.permission.WRITE_CONTACTS, REQUEST_WRITE_CONTACTS);
                 } else {
                     // permission denied,Disable the
                     // functionality that depends on this permission.
@@ -75,6 +83,18 @@ public class SplashActivity  extends AppCompatActivity {
             case REQUEST_WRITE_CONTACTS: {
                 if (grantResults.length > 0
                         && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    permissionCount++;
+                    if(permissionCount >= 3) {
+                        handler.postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                Log.d("yjyj", "in postdelay");
+                                Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+                                startActivity(intent);
+                                finish();
+                            }
+                        }, 1000);
+                    }
                     Log.d("yjyj", "In Splash Activity, case Write");
                 } else {
                     // permission denied,Disable the
@@ -82,16 +102,32 @@ public class SplashActivity  extends AppCompatActivity {
                 }
                 break;
              }
-            default : handler.postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    Intent intent = new Intent(getApplicationContext(), MainActivity.class);
-                    startActivity(intent);
-                    finish();
+            case REQUEST_F_LOCATION: {
+                if (grantResults.length > 0
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    permissionCount++;
+                    checkPermission(Manifest.permission.READ_CONTACTS, REQUEST_READ_CONTACTS);
+                    Log.d("yjyj", "In Splash Activity, case Location");
+                } else {
+                    // permission denied,Disable the
+                    // functionality that depends on this permission.
                 }
-            }, 1000);
+                break;
+            }
         }
     }
+
+    public static boolean hasPermissions(Context context, String[] permissions) {
+        if (context != null && permissions != null) {
+            for (String permission : permissions) {
+                if (ActivityCompat.checkSelfPermission(context, permission) != PackageManager.PERMISSION_GRANTED) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
 
     @Override
     public void onPause() {

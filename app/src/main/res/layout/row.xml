@@ -12,12 +12,11 @@
         android:layout_width="241dp"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentRight="true"
-        android:layout_centerVertical="true"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="28dp"
-        android:layout_marginRight="28dp"
+        android:layout_marginStart="9dp"
+        android:layout_marginLeft="9dp"
+        android:layout_marginTop="10dp"
+        android:layout_toEndOf="@+id/imageView"
+        android:layout_toRightOf="@+id/imageView"
         android:gravity="center_vertical"
         android:textSize="20sp" />
 
@@ -27,19 +26,19 @@
         android:layout_height="65dp"
         android:contentDescription="@string/cat"
         android:visibility="visible"
-        app:srcCompat="@drawable/img2" />
+        app:srcCompat="@drawable/profile" />
 
     <TextView
         android:id="@+id/bottomtext"
         android:layout_width="237dp"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentRight="true"
-        android:layout_centerVertical="true"
-        android:layout_marginTop="38dp"
-        android:layout_marginEnd="31dp"
-        android:layout_marginRight="31dp"
+        android:layout_centerHorizontal="true"
+        android:layout_marginStart="12dp"
+        android:layout_marginLeft="12dp"
+        android:layout_marginTop="42dp"
+        android:layout_toEndOf="@+id/imageView"
+        android:layout_toRightOf="@+id/imageView"
         android:ellipsize="marquee"
         android:singleLine="true" />
 
