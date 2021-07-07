@@ -36,7 +36,7 @@ public class Weather extends Thread{
         String ny = Double.toString(Fragment3.converted_y); //위경도 정보는 api문서 볼 것*/
         String baseDate = fm1.format(date); //원하는 날짜
         Log.d("weather", baseDate);
-        String baseTime = pass_time; //원하는 시간
+        String baseTime = "1240"; //원하는 시간
         Log.d("weather", baseTime);
         Log.d("weather2", String.valueOf((int) Math.round(converted_x)));
 
