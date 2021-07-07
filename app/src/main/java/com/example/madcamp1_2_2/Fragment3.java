@@ -124,7 +124,7 @@ public class Fragment3<isLocationAvailable> extends Fragment {
         // Inflate the layout for this fragments
         viewGroup = (ViewGroup) inflater.inflate(R.layout.fragment_3, container, false);
         mTimePicker = (TimePicker) viewGroup.findViewById(R.id.timePicker);
-        mTimePicker.setIs24HourView(true);
+        //mTimePicker.setIs24HourView(true);
 
         mTimePicker.setOnTimeChangedListener(new TimePicker.OnTimeChangedListener() {
             @Override
@@ -275,7 +275,7 @@ public class Fragment3<isLocationAvailable> extends Fragment {
             currentDateTime = calendar.getTime();
             pass_time = new SimpleDateFormat("hhmm", Locale.getDefault()).format(currentDateTime);
 
-            final Weather at = new Weather();
+            /**final Weather at = new Weather();
             Executors.newSingleThreadExecutor().execute(new Runnable() {
                 @Override
                 public void run() {
@@ -285,7 +285,7 @@ public class Fragment3<isLocationAvailable> extends Fragment {
                         e.printStackTrace();
                     }
                 }
-            });
+            });*/
         }
 
 
@@ -355,7 +355,7 @@ public class Fragment3<isLocationAvailable> extends Fragment {
 
                     Log.d("testtest", converted_x + " " + converted_y);
 
-                    final Weather at = new Weather();
+                    /**final Weather at = new Weather();
                     Executors.newSingleThreadExecutor().execute(new Runnable() {
                         @Override
                         public void run() {
@@ -365,7 +365,7 @@ public class Fragment3<isLocationAvailable> extends Fragment {
                                 e.printStackTrace();
                             }
                         }
-                    });
+                    });*/
 
                 }
                 else isLocationAvailable = false;
@@ -411,9 +411,9 @@ public class Fragment3<isLocationAvailable> extends Fragment {
     }
 
     void diaryNotification(Calendar calendar){
-        Boolean dailyNotify = false;
+        Boolean dailyNotify = true;
         if (isSwitchOn && is_rain) dailyNotify = true;
-        else dailyNotify = false;
+        else dailyNotify = true;
 
         PackageManager pm = mContext.getPackageManager();
         ComponentName receiver = new ComponentName(mContext, DeviceBootReceiver.class);
